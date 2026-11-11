@@ -3,6 +3,34 @@ import { AVR_PATTERN_NAMES } from '../simulation/fastled';
 
 const storageKey = 'led-cube:settings:v1';
 
+// Migrate the IDs saved by older versions of the viewer.
+const legacyPatterns: Record<string, string> = {
+  'Filotaxia Esférica': 'spherical-phyllotaxis',
+  'Ondas Concêntricas': 'concentric-waves',
+  'Dupla Hélice Áurea': 'golden-double-helix',
+  Chuva: 'rain',
+  'Pulso Central': 'center-pulse',
+  'Cubo Crescente': 'growing-cube',
+  'Planos Empilhados': 'stacked-planes',
+  'Árvore 3D': '3d-tree',
+  'Plasma 3D': '3d-plasma',
+  'Fogos de Artifício': 'fireworks',
+  'Preenchimento de Eixo': 'axis-fill',
+  'Caminho de Lissajous': 'lissajous-path',
+};
+const legacyPalettes: Record<string, string> = {
+  'Arco-íris Dinâmico': 'dynamic-rainbow',
+  Girassol: 'sunflower',
+  Nautilus: 'nautilus',
+  Aurora: 'aurora',
+  'Crescimento Vegetal': 'plant-growth',
+  Galáxia: 'galaxy',
+  'Nautilus Dourado': 'golden-nautilus',
+  'Girassol Psicodélico': 'psychedelic-sunflower',
+  'Fractal Romanesco': 'romanesco-fractal',
+  'Phi Digital': 'digital-phi',
+};
+
 export const panelIds = ['simulation', 'appearance', 'fastled', 'wokwi'] as const;
 export type PanelId = typeof panelIds[number];
 
@@ -45,8 +73,10 @@ function readRange(value: unknown, key: keyof typeof viewerRanges, fallback: num
   return Number((min + Math.round((bounded - min) / step) * step).toFixed(2));
 }
 
-function readChoice(value: unknown, options: string[], fallback: string) {
-  return typeof value === 'string' && options.includes(value) ? value : fallback;
+function readChoice(value: unknown, options: string[], fallback: string, legacyIds: Record<string, string>) {
+  if (typeof value !== 'string') return fallback;
+  const id = Object.hasOwn(legacyIds, value) ? legacyIds[value] : value;
+  return options.includes(id) ? id : fallback;
 }
 
 export function readViewerSettings(): ViewerSettings {
@@ -63,7 +93,7 @@ export function readViewerSettings(): ViewerSettings {
     showGrid: true,
     showWiring: true,
     localPattern: PATTERN_NAMES[0],
-    colorPalette: 'Aurora',
+    colorPalette: 'aurora',
     simulationSource: 'avr',
     avrPattern: 0,
   };
@@ -85,8 +115,8 @@ export function readViewerSettings(): ViewerSettings {
       cubeSize: readRange(value.cubeSize, 'cubeSize', defaults.cubeSize),
       showGrid: typeof value.showGrid === 'boolean' ? value.showGrid : defaults.showGrid,
       showWiring: typeof value.showWiring === 'boolean' ? value.showWiring : defaults.showWiring,
-      localPattern: readChoice(value.localPattern, PATTERN_NAMES, defaults.localPattern),
-      colorPalette: readChoice(value.colorPalette, PALETTE_NAMES, defaults.colorPalette),
+      localPattern: readChoice(value.localPattern, PATTERN_NAMES, defaults.localPattern, legacyPatterns),
+      colorPalette: readChoice(value.colorPalette, PALETTE_NAMES, defaults.colorPalette, legacyPalettes),
       simulationSource: value.simulationSource === 'preview' ? 'preview' : 'avr',
       avrPattern: typeof value.avrPattern === 'number' && Number.isInteger(value.avrPattern) &&
         value.avrPattern >= 0 && value.avrPattern <= AVR_PATTERN_NAMES.length ? value.avrPattern : defaults.avrPattern,

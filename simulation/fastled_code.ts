@@ -20,7 +20,7 @@ const INDEX_TO_XYZ_MAPPING = `void indexToXyz(uint16_t index, uint8_t &x, uint8_
 }`;
 
 export const FASTLED_CODE: { [key: string]: string } = {
-    "Filotaxia Esférica": `/*
+    "spherical-phyllotaxis": `/*
  * FastLED example: Spherical Phyllotaxis
  * Places points on a sphere using the golden angle.
  */
@@ -65,7 +65,7 @@ void sphericalPhyllotaxis() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Ondas Concêntricas": `/*
+    "concentric-waves": `/*
  * FastLED example: Concentric Waves
  * Generates spherical waves from the center of the cube.
  */
@@ -107,7 +107,7 @@ void concentricWaves() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Dupla Hélice Áurea": `/*
+    "golden-double-helix": `/*
  * FastLED example: Golden Double Helix
  * Draws two intertwined helices rotating around the Y axis.
  */
@@ -153,7 +153,7 @@ void goldenDoubleHelix() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Árvore 3D": `/*
+    "3d-tree": `/*
  * FastLED example: 3D Tree
  * Animates a growing pine tree with blinking ornaments.
  */
@@ -217,7 +217,7 @@ void tree3D() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Planos Empilhados": `/*
+    "stacked-planes": `/*
  * FastLED example: Stacked Planes
  * Fills the cube with horizontal planes one at a time.
  */
@@ -254,7 +254,7 @@ void stackingPlanes() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Chuva": `/*
+    "rain": `/*
  * FastLED example: Rain
  * Simulates raindrops falling from the top of the cube.
  */
@@ -296,7 +296,7 @@ void rain() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Pulso Central": `/*
+    "center-pulse": `/*
  * FastLED example: Center Pulse
  * A spherical wave expands outward from the center.
  */
@@ -343,7 +343,7 @@ void centerPulse() {
 ${XYZ_MAPPING}
 ${INDEX_TO_XYZ_MAPPING}
     `,
-    "Cubo Crescente": `/*
+    "growing-cube": `/*
  * FastLED example: Growing Cube
  * A cube grows and shrinks around the center while changing color.
  */
@@ -390,7 +390,7 @@ void growingCube() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Plasma 3D": `/*
+    "3d-plasma": `/*
  * FastLED example: 3D Plasma
  * A pulsing volumetric plasma effect.
  */
@@ -425,7 +425,7 @@ void plasma3D() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Fogos de Artifício": `/*
+    "fireworks": `/*
  * FastLED example: Fireworks
  * Simulates rising rockets and spherical bursts.
  * This pattern requires more processing power than the other examples.
@@ -519,7 +519,7 @@ void fireworks() {
 ${XYZ_MAPPING}
 ${INDEX_TO_XYZ_MAPPING}
     `,
-    "Preenchimento de Eixo": `/*
+    "axis-fill": `/*
  * FastLED example: Axis Fill
  * Fills and clears the cube along the Y axis with a color gradient.
  */
@@ -554,7 +554,7 @@ void axisFill() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
-    "Caminho de Lissajous": `/*
+    "lissajous-path": `/*
  * FastLED example: Lissajous Path
  * Draws the trail of a 3D Lissajous curve.
  */

@@ -1,4 +1,4 @@
-import { CUBE_SIZE, PATTERN_NAMES } from '../constants';
+import { CUBE_SIZE } from '../constants';
 import type { Led } from '../types';
 import { indexToXyz as readCoordinates, xyzToIndex as readIndex } from '../utils/helpers';
 
@@ -28,15 +28,15 @@ const lerpColor = (color1: Led, color2: Led, amount: number): Led => {
 };
 
 const PALETTES: { [key: string]: Led[] } = {
-    "Girassol": ["#FDB813", "#FF8C00", "#FF6B35", "#8B4513"].map(hexToRgb),
-    "Nautilus": ["#0A3D62", "#1F618D", "#3498DB", "#5DADE2", "#AED6F1"].map(hexToRgb),
-    "Crescimento Vegetal": ["#27AE60", "#52BE80", "#F39C12", "#E67E22"].map(hexToRgb),
-    "Aurora": ["#9B59B6", "#3498DB", "#16A085", "#F39C12", "#E74C3C"].map(hexToRgb),
-    "Galáxia": ["#1A1A2E", "#16213E", "#533483", "#E94560"].map(hexToRgb),
-    "Nautilus Dourado": ["#F0EAD6", "#FFD700", "#DAA520", "#A0522D", "#191970"].map(hexToRgb),
-    "Girassol Psicodélico": ["#2E112D", "#FFFF00", "#00FF00", "#FF00FF", "#8A2BE2"].map(hexToRgb),
-    "Fractal Romanesco": ["#006400", "#2E8B57", "#32CD32", "#ADFF2F", "#F0FFF0"].map(hexToRgb),
-    "Phi Digital": ["#FF00FF", "#00FFFF", "#FFA500", "#000000"].map(hexToRgb),
+    "sunflower": ["#FDB813", "#FF8C00", "#FF6B35", "#8B4513"].map(hexToRgb),
+    "nautilus": ["#0A3D62", "#1F618D", "#3498DB", "#5DADE2", "#AED6F1"].map(hexToRgb),
+    "plant-growth": ["#27AE60", "#52BE80", "#F39C12", "#E67E22"].map(hexToRgb),
+    "aurora": ["#9B59B6", "#3498DB", "#16A085", "#F39C12", "#E74C3C"].map(hexToRgb),
+    "galaxy": ["#1A1A2E", "#16213E", "#533483", "#E94560"].map(hexToRgb),
+    "golden-nautilus": ["#F0EAD6", "#FFD700", "#DAA520", "#A0522D", "#191970"].map(hexToRgb),
+    "psychedelic-sunflower": ["#2E112D", "#FFFF00", "#00FF00", "#FF00FF", "#8A2BE2"].map(hexToRgb),
+    "romanesco-fractal": ["#006400", "#2E8B57", "#32CD32", "#ADFF2F", "#F0FFF0"].map(hexToRgb),
+    "digital-phi": ["#FF00FF", "#00FFFF", "#FFA500", "#000000"].map(hexToRgb),
 };
 
 const hslToRgb = (h: number, s: number, l: number): Led => {
@@ -62,7 +62,7 @@ const hslToRgb = (h: number, s: number, l: number): Led => {
 };
 
 export const getColorFromPalette = (paletteName: string, t: number, brightness: number = 0.5): Led => {
-    if (paletteName === "Arco-íris Dinâmico" || !PALETTES[paletteName]) {
+    if (paletteName === "dynamic-rainbow" || !PALETTES[paletteName]) {
         const color = hslToRgb(t, 1, brightness);
         return color;
     }
@@ -299,7 +299,7 @@ export function createSimulation(cubeSize = CUBE_SIZE) {
                         const ornamentChance = 0.1;
                         if (Math.sin(x + z + time/200) > 0.8 && Math.random() < ornamentChance) {
                             const hue = (x + y + z + time / 1000) % 1;
-                            leds[index] = getColorFromPalette("Arco-íris Dinâmico", hue, 0.5);
+                            leds[index] = getColorFromPalette("dynamic-rainbow", hue, 0.5);
                         }
                     }
                 }
@@ -458,18 +458,18 @@ export function createSimulation(cubeSize = CUBE_SIZE) {
     // #endregion
 
     const generators: { [key: string]: (time: number, paletteName: string) => Led[] } = {
-        [PATTERN_NAMES[0]]: generateSphericalPhyllotaxis,
-        [PATTERN_NAMES[1]]: generateConcentricWaves,
-        [PATTERN_NAMES[2]]: generateGoldenDoubleHelix,
-        [PATTERN_NAMES[3]]: generateRain,
-        [PATTERN_NAMES[4]]: generateCenterPulse,
-        [PATTERN_NAMES[5]]: generateGrowingCube,
-        [PATTERN_NAMES[6]]: generateStackingPlanes,
-        [PATTERN_NAMES[7]]: generate3dTree,
-        [PATTERN_NAMES[8]]: generate3dPlasma,
-        [PATTERN_NAMES[9]]: generateFireworks,
-        [PATTERN_NAMES[10]]: generateAxisFill,
-        [PATTERN_NAMES[11]]: generateLissajousPath,
+        'spherical-phyllotaxis': generateSphericalPhyllotaxis,
+        'concentric-waves': generateConcentricWaves,
+        'golden-double-helix': generateGoldenDoubleHelix,
+        'rain': generateRain,
+        'center-pulse': generateCenterPulse,
+        'growing-cube': generateGrowingCube,
+        'stacked-planes': generateStackingPlanes,
+        '3d-tree': generate3dTree,
+        '3d-plasma': generate3dPlasma,
+        'fireworks': generateFireworks,
+        'axis-fill': generateAxisFill,
+        'lissajous-path': generateLissajousPath,
     };
 
     return (patternName: string, time: number, paletteName: string): Led[] => {
