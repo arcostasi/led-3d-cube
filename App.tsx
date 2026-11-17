@@ -16,13 +16,12 @@ import sketch from './firmware/led_cube/led_cube.ino?raw';
 import type { AvrEvent } from './simulation/fastled.worker';
 import { readMegaFirmware } from './simulation/intelHex';
 import { useAvrSimulation, type LoadedFirmware } from './simulation/useAvrSimulation';
-import { listenToWokwi } from './simulation/wokwi';
+import { listenToCustomView } from './simulation/customView';
 import { indexToXyz } from './utils/helpers';
 import { readViewerSettings, saveViewerSettings, viewerRanges, type ChangeSetting, type PanelId } from './utils/viewerSettings';
 
 interface DisplayedFrame {
   leds: Led[];
-  source: 'avr' | 'preview' | 'wokwi';
   pattern?: string;
 }
 
@@ -30,7 +29,7 @@ const panelDefinitions = [
   { id: 'simulation', title: 'Local Simulation', icon: 'simulation', side: 'left' },
   { id: 'appearance', title: 'View Settings', icon: 'sliders', side: 'left' },
   { id: 'fastled', title: 'FastLED Code', icon: 'code', side: 'right' },
-  { id: 'wokwi', title: 'Wokwi Integration', icon: 'link', side: 'right' },
+  { id: 'wokwi', title: 'Custom View Integration', icon: 'link', side: 'right' },
 ] satisfies { id: PanelId; title: string; icon: IconName; side: 'left' | 'right' }[];
 const leftPanels = panelDefinitions.filter(({ side }) => side === 'left');
 const rightPanels = panelDefinitions.filter(({ side }) => side === 'right');
@@ -81,7 +80,7 @@ const App = () => {
   const updateSimulation = useMemo(() => createSimulation(cubeSize), [cubeSize]);
   const currentFrame = frame?.leds.length === ledCount ? frame : null;
   const [fps, setFps] = useState(0);
-  const [wokwiPattern, setWokwiPattern] = useState('NeoPixels');
+  const [externalPattern, setExternalPattern] = useState('NeoPixels');
   const [connected, setConnected] = useState(false);
   const [nativePattern, setNativePattern] = useState<string>();
   const [firmware, setFirmware] = useState<LoadedFirmware | null>(null);
@@ -94,7 +93,7 @@ const App = () => {
   const shellRef = useRef<HTMLDivElement>(null);
   const firmwareInput = useRef<HTMLInputElement>(null);
   const simulationFrameRef = useRef(0);
-  const wokwiConnected = useRef(false);
+  const externalConnected = useRef(false);
   const importRequest = useRef(0);
   const leds = currentFrame?.leds ?? (started ? blankLeds : previewLeds);
 
@@ -135,22 +134,22 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    return listenToWokwi((incomingLeds) => {
-      if (!wokwiConnected.current) {
-        wokwiConnected.current = true;
+    return listenToCustomView((incomingLeds) => {
+      if (!externalConnected.current) {
+        externalConnected.current = true;
         cancelAnimationFrame(simulationFrameRef.current);
         setConnected(true);
         setIsSimulating(false);
       }
-      setFrame({ leds: incomingLeds, source: 'wokwi' });
-    }, setWokwiPattern, cubeSize, externalPixelOrder);
+      setFrame({ leds: incomingLeds });
+    }, setExternalPattern, cubeSize, externalPixelOrder);
   }, [cubeSize]);
 
   useEffect(() => {
     if (!isSimulating || connected || simulationSource !== 'preview') return;
 
     const animate = (time: number) => {
-      setFrame({ leds: updateSimulation(localPattern, time, colorPalette), source: 'preview', pattern: localPattern });
+      setFrame({ leds: updateSimulation(localPattern, time, colorPalette), pattern: localPattern });
       simulationFrameRef.current = requestAnimationFrame(animate);
     };
     simulationFrameRef.current = requestAnimationFrame(animate);
@@ -159,9 +158,9 @@ const App = () => {
   }, [isSimulating, connected, simulationSource, localPattern, colorPalette, updateSimulation]);
 
   const handleAvrEvent = useCallback((event: AvrEvent) => {
-    if (wokwiConnected.current) return;
+    if (externalConnected.current) return;
     if (event.type === 'frame') {
-      setFrame({ leds: decodeNeoPixels(event.pixels, cubeSize, firmware ? externalPixelOrder : 'linear'), source: 'avr' });
+      setFrame({ leds: decodeNeoPixels(event.pixels, cubeSize, firmware ? externalPixelOrder : 'linear') });
     } else if (event.type === 'pattern') {
       setNativePattern(AVR_PATTERN_NAMES[event.index]);
     } else {
@@ -182,7 +181,7 @@ const App = () => {
     try {
       if (file && file.size > 1_600_000) throw new Error('The HEX file is too large for an Arduino Mega.');
       const hex = file ? await file.text() : '';
-      if (request !== importRequest.current || wokwiConnected.current) return;
+      if (request !== importRequest.current || externalConnected.current) return;
       if (file) readMegaFirmware(hex);
 
       setFirmware(file ? { name: file.name, hex } : null);
@@ -211,9 +210,9 @@ const App = () => {
     setIsSimulating(true);
   };
   const previewPattern = currentFrame?.pattern ?? localPattern;
-  const currentPattern = connected ? wokwiPattern : simulationSource === 'preview' ? PATTERN_LABELS[previewPattern]
+  const currentPattern = connected ? externalPattern : simulationSource === 'preview' ? PATTERN_LABELS[previewPattern]
     : firmware?.name ?? nativePattern ?? (avrPattern ? AVR_PATTERN_NAMES[avrPattern - 1] : 'Automatic cycle');
-  const mode = connected ? 'Wokwi' : isSimulating
+  const mode = connected ? 'Custom View' : isSimulating
     ? simulationSource === 'preview' ? '3D Animations' : currentFrame ? 'AVR8js' : 'AVR8js · waiting for signal'
     : started ? 'Paused' : 'Preview';
   const playLabel = started ? 'Resume simulation' : 'Start simulation';
@@ -239,7 +238,7 @@ const App = () => {
   const leftOpen = leftPanels.some(({ id }) => panelIsOpen(id));
   const rightOpen = rightPanels.some(({ id }) => panelIsOpen(id));
   const code = useMemo(() => {
-    if (connected) return '// Open the sketch in the Wokwi project editor.';
+    if (connected) return '// Open the sketch in the host simulator.';
     if (simulationSource === 'avr' && firmware) return firmware.hex;
     const source = simulationSource === 'preview' ? FASTLED_CODE[localPattern] : sketch;
     return source.replace(/^#define CUBE_SIZE \d+/m, `#define CUBE_SIZE ${cubeSize}`);

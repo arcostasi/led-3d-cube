@@ -28,7 +28,7 @@ export const FASTLED_CODE: { [key: string]: string } = {
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6 // Set this to your project's data pin
+#define DATA_PIN 3 // Set this to your project's data pin
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t); // Mapping function declaration
@@ -73,7 +73,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -115,7 +115,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -161,7 +161,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -225,7 +225,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -262,7 +262,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 #define NUM_DROPS 34 // Number of simultaneous raindrops
 
 CRGB leds[NUM_LEDS];
@@ -304,7 +304,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 void indexToXyz(uint16_t, uint8_t&, uint8_t&, uint8_t&);
@@ -351,7 +351,7 @@ ${INDEX_TO_XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -398,7 +398,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -434,7 +434,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 #define MAX_ROCKETS 3
 #define MAX_EXPLOSIONS 3
@@ -527,7 +527,7 @@ ${INDEX_TO_XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);
@@ -562,7 +562,7 @@ ${XYZ_MAPPING}
 
 #define CUBE_SIZE 8
 #define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
-#define DATA_PIN 6
+#define DATA_PIN 3
 
 CRGB leds[NUM_LEDS];
 uint16_t xyz(uint8_t, uint8_t, uint8_t);

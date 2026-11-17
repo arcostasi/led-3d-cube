@@ -24,7 +24,7 @@ const InfoPanel = memo(({ size, connected }: { size: number; connected: boolean 
 
   return (
     <div className="integration-copy">
-      <p>{connected ? 'Receiving NeoPixel frames from Wokwi.' : `Arduino Mega · D3 → DIN · ${size ** 3} NeoPixels`}</p>
+      <p>{connected ? 'Receiving NeoPixel frames from the host simulator.' : `Arduino Mega · D3 → DIN · ${size ** 3} NeoPixels`}</p>
       <div className="integration-links">
         <a href={WOKWI_PROJECT} target="_blank" rel="noreferrer">Wokwi project</a>
         <a href={WOKWI_REFERENCE_VIEW} target="_blank" rel="noreferrer">Original viewer</a>
@@ -41,7 +41,7 @@ const InfoPanel = memo(({ size, connected }: { size: number; connected: boolean 
         </div>
       </div>
       <pre className="code-block" tabIndex={0} aria-label="customView URL"><code>{view.href}</code></pre>
-      {view.protocol !== 'https:' && <p>Host the viewer over HTTPS to use this URL in Wokwi.</p>}
+      {view.protocol !== 'https:' && <p>Use a public HTTPS URL for Wokwi. The Electron playground accepts local HTTP URLs.</p>}
       {copied === '' && <p role="status">Select the URL to copy it manually.</p>}
     </div>
   );

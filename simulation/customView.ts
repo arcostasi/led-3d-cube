@@ -4,6 +4,19 @@ import { AVR_PATTERN_NAMES, decodeNeoPixels, type PixelOrder } from './fastled';
 
 const WOKWI_ORIGIN = 'https://wokwi.com';
 
+function isLoopback(hostname: string) {
+  return ['localhost', '127.0.0.1', '[::1]'].includes(hostname);
+}
+
+function getSubscriptionOrigin() {
+  if (!document.referrer) return WOKWI_ORIGIN;
+
+  const parent = new URL(document.referrer);
+  const localPreview = isLoopback(window.location.hostname) && isLoopback(parent.hostname) &&
+    (parent.protocol === 'http:' || parent.protocol === 'https:');
+  return localPreview || parent.origin === window.location.origin ? parent.origin : WOKWI_ORIGIN;
+}
+
 function readBytes(value: unknown) {
   if (value instanceof Uint8Array) return value;
   if (value instanceof ArrayBuffer) return new Uint8Array(value);
@@ -36,15 +49,17 @@ function readFrame(data: Record<string, unknown>, size: number, order: PixelOrde
   return decodeNeoPixels(pixels, size, order);
 }
 
-export function listenToWokwi(onFrame: (leds: Led[]) => void, onPattern: (pattern: string) => void, size: number, order: PixelOrder) {
+export function listenToCustomView(onFrame: (leds: Led[]) => void, onPattern: (pattern: string) => void, size: number, order: PixelOrder) {
   const decoder = new TextDecoder();
   let serialBuffer = '';
   const embedded = window.parent !== window;
+  const subscriptionOrigin = embedded ? getSubscriptionOrigin() : window.location.origin;
   let subscription: number | undefined;
 
   function handleMessage({ source, origin, data }: MessageEvent<unknown>) {
     if (source !== window.parent) return;
-    if (origin !== WOKWI_ORIGIN && origin !== window.location.origin) return;
+    // Electron's IPC bridge uses the Wokwi origin. A local browser host can use postMessage directly.
+    if (origin !== WOKWI_ORIGIN && origin !== window.location.origin && origin !== subscriptionOrigin) return;
     if (!data || typeof data !== 'object') return;
 
     const message = data as Record<string, unknown>;
@@ -71,7 +86,7 @@ export function listenToWokwi(onFrame: (leds: Led[]) => void, onPattern: (patter
   window.addEventListener('message', handleMessage);
   if (embedded) {
     // Retry the subscription until the simulator is ready to send a frame.
-    const subscribe = () => window.parent.postMessage({ app: 'wokwi', command: 'listen', version: 1 }, WOKWI_ORIGIN);
+    const subscribe = () => window.parent.postMessage({ app: 'wokwi', command: 'listen', version: 1 }, subscriptionOrigin);
     subscribe();
     subscription = window.setInterval(subscribe, 1000);
   }
