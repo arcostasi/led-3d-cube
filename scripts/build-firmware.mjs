@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, mkdtempSync, realpathSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +15,8 @@ try {
     '--output-dir', build, sketch,
   ], { stdio: 'inherit' });
   mkdirSync(destination, { recursive: true });
-  copyFileSync(join(build, 'led_cube.ino.hex'), join(destination, 'led_cube.hex'));
+  const hex = readFileSync(join(build, 'led_cube.ino.hex'), 'utf8');
+  writeFileSync(join(destination, 'led_cube.hex'), hex.replaceAll('\r\n', '\n'));
 } finally {
   if (dirname(build) === temp) rmSync(build, { recursive: true, force: true });
 }
