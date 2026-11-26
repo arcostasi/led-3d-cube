@@ -2,6 +2,8 @@
 
 An interactive RGB LED cube viewer, an Arduino Mega simulator, and a Custom View for Wokwi and AVR8js Electron Playground. The cube defaults to 8 × 8 × 8 (512 LEDs) and supports 3 to 10 LEDs per edge.
 
+[Open the hosted 8 × 8 × 8 viewer](https://arcostasi.github.io/led-3d-cube/?size=8)
+
 ## Run locally
 
 Use Node.js 20.19+ on the 20.x line or Node.js 22.12+ and a modern browser with WebGL 2.
@@ -28,18 +30,17 @@ Match the sketch's pixel count, the diagram's NeoPixel strip count, and the view
 
 ### Wokwi
 
-1. Run `npm run build` and publish the contents of `dist/` at a public HTTPS URL. The hosting configuration must allow `https://wokwi.com` to embed the viewer.
-2. Use the [example sketch](firmware/led_cube/led_cube.ino), [library list](firmware/led_cube/libraries.txt), and [diagram](firmware/led_cube/diagram.json) to create a Wokwi project, or use an existing project with a matching NeoPixel strip.
-3. Open the published viewer, set the cube size, and open **Custom View Integration**. Copy the viewer URL into the project's `customView` field in `diagram.json`, or download a diagram with the URL and pixel count already filled in.
-4. Start the Wokwi simulation. The viewer switches to **Custom View** when it receives a frame with the matching pixel count.
+1. Use the [example sketch](firmware/led_cube/led_cube.ino), [library list](firmware/led_cube/libraries.txt), and [diagram](firmware/led_cube/diagram.json) to create a Wokwi project. The example diagram uses the hosted 8 × 8 × 8 viewer.
+2. To use another cube size or an existing project, open **Custom View Integration** in the hosted viewer. Copy its URL into the `customView` field in `diagram.json`, or download a diagram with the URL and pixel count already filled in.
+3. Start the Wokwi simulation. The viewer switches to **Custom View** when it receives a frame with the matching pixel count.
 
 [Wokwi diagram format](https://docs.wokwi.com/diagram-format) · [Wokwi Custom View example](https://github.com/wokwi/led-recorder#usage)
 
 ### AVR8js Electron Playground
 
-1. Keep `npm run dev` running in this repository.
-2. In a build of the playground that supports Custom View, open its `led-3d-cube-custom-view` example. You can also set `"customView": "http://localhost:3000/?size=8"` in a matching project's `diagram.json`.
-3. Switch to **Custom View** in the simulator toolbar and run the project. The Electron bridge forwards live NeoPixel frames and serial output to the viewer. A public HTTPS deployment also works.
+1. In a build of the playground that supports Custom View, open its `led-3d-cube-custom-view` example or another project with a matching NeoPixel strip.
+2. Set the project's `customView` field in `diagram.json` to the hosted URL. For local development, run `npm run dev` and use `http://localhost:3000/?size=8`.
+3. Switch to **Custom View** in the simulator toolbar and run the project. The Electron bridge forwards live NeoPixel frames and serial output to the viewer.
 
 The playground runs the simulation with AVR8js and uses Wokwi Elements for its circuit UI. [AVR8js Electron Playground](https://github.com/arcostasi/avr8js-electron-playground)
 
@@ -66,6 +67,8 @@ This regenerates [`public/firmware/led_cube.hex`](public/firmware/led_cube.hex).
 | `npm run typecheck` | Check TypeScript types. |
 | `npm run build` | Type-check and build the static site into `dist/`. |
 | `npm run preview` | Serve the production build locally. |
+
+GitHub Actions publishes updates to GitHub Pages from `main`. To host the viewer elsewhere, deploy the output of `npm run build` on an HTTPS server that allows Wokwi to embed it.
 
 - [`components/`](components/) contains the React interface and Three.js scene.
 - [`simulation/`](simulation/) contains the AVR8js worker, Intel HEX loader, animation generators, and Custom View receiver.

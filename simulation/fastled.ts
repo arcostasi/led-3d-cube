@@ -6,7 +6,7 @@ import libraries from '../firmware/led_cube/libraries.txt?raw';
 export const FASTLED_VERSION = libraries.trim().split('@')[1];
 export const AVR_PATTERN_NAMES = ['Sinelon', 'Rainbow With Glitter', 'Confetti', 'Juggle', 'Beat', 'Rainbow'] as const;
 export const WOKWI_PROJECT = 'https://wokwi.com/projects/288247972165059084';
-export const WOKWI_REFERENCE_VIEW = diagram.customView;
+export const WOKWI_REFERENCE_VIEW = 'https://wokwi.github.io/led-3d-cube/?size=8';
 export type PixelOrder = 'linear' | 'serpentine';
 
 export function makeWokwiDiagram(customView: string, ledCount: number) {

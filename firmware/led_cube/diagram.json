@@ -2,7 +2,7 @@
   "version": 1,
   "author": "Uri Shaked",
   "editor": "wokwi",
-  "customView": "https://wokwi.github.io/led-3d-cube/?size=8",
+  "customView": "https://arcostasi.github.io/led-3d-cube/?size=8",
   "parts": [
     { "id": "uno", "type": "wokwi-arduino-mega", "top": 390, "left": 60 },
     { "id": "neopixels", "type": "wokwi-neopixel-strip", "top": 0, "left": 0, "attrs": { "pixels": "512" } }
