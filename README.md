@@ -2,16 +2,13 @@
 
 [![Live demo](https://img.shields.io/badge/demo-GitHub%20Pages-5ee7ff)](https://arcostasi.github.io/led-3d-cube/?size=8)
 [![Deploy](https://github.com/arcostasi/led-3d-cube/actions/workflows/pages.yml/badge.svg)](https://github.com/arcostasi/led-3d-cube/actions/workflows/pages.yml)
-[![FastLED 3.10.10](https://img.shields.io/badge/FastLED-3.10.10-a98bff)](https://github.com/FastLED/FastLED/releases/tag/3.10.10)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 An open-source teaching project to learn FastLED and prototype an RGB LED cube in the browser, before you buy any parts. It runs real Arduino Mega firmware, shows every LED and wire in 3D, and works as a Custom View for Wokwi and AVR8js Electron Playground.
 
-<p align="center">
-  <a href="https://arcostasi.github.io/led-3d-cube/?size=8">
-    <img src="docs/preview.jpg" width="420" alt="3D LED Cube running a rainbow effect, with the caption: Test your LED cube before you buy a single LED.">
-  </a>
-</p>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/f58de8fb-1426-43b5-a892-cf140c80b7ed" width="720" />
+</div>
 
 <p align="center"><strong><a href="https://arcostasi.github.io/led-3d-cube/?size=8">▶ Try the 8 × 8 × 8 demo</a></strong></p>
 
