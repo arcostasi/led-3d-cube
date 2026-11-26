@@ -1,77 +1,47 @@
 # 3D LED Cube
 
-An interactive RGB LED cube viewer, an Arduino Mega simulator, and a Custom View for Wokwi and AVR8js Electron Playground. The cube defaults to 8 × 8 × 8 (512 LEDs) and supports 3 to 10 LEDs per edge.
+An interactive RGB LED cube, an Arduino Mega simulator, and a Custom View for Wokwi and AVR8js Electron Playground. The viewer supports cubes from 3 to 10 LEDs per edge.
 
-[Open the hosted 8 × 8 × 8 viewer](https://arcostasi.github.io/led-3d-cube/?size=8)
+**[Try the 8 × 8 × 8 demo on GitHub Pages](https://arcostasi.github.io/led-3d-cube/?size=8)**
+
+Select **Start simulation** to run the bundled FastLED firmware. Choose **3D Animations** in **Local Simulation** to explore geometric effects and color palettes.
 
 ## Run locally
 
-Use Node.js 20.19+ on the 20.x line or Node.js 22.12+ and a modern browser with WebGL 2.
+Use Node.js 20.19+ on the 20.x line or Node.js 22.12+ and a browser with WebGL 2.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000/) and select **Start simulation**. In **Local Simulation**, choose **Arduino Mega · AVR8js** to run the bundled FastLED firmware or **3D Animations** to explore geometric effects and palettes.
-
-In **View Settings**, adjust the cube size, brightness, rotation, and wiring visibility. Drag to orbit the cube or select **Pan camera** to move the view. Zoom with the mouse wheel, pinch gesture, or zoom buttons. **Reset camera** restores the starting view.
+Open the viewer at [localhost:3000](http://localhost:3000/). Use **Load firmware** to run an Arduino Mega 2560 `.hex` file. The emulator reads WS2812B/GRB data on pin D3.
 
 ## Use as a Custom View
 
-Match the sketch's pixel count, the diagram's NeoPixel strip count, and the viewer's cube size. For an 8 × 8 × 8 cube, use 512 pixels and set `size=8`. The default pixel order matches the original Wokwi cube. Append `&order=serpentine` for sketches that address the cube's serpentine wiring.
+Set the `customView` field in your project's `diagram.json` to the hosted viewer.
 
-| Setting | Bundled sketch |
-| --- | --- |
-| Board | Arduino Mega 2560 |
-| NeoPixel strip ID | `neopixels` |
-| Signal | WS2812B, GRB, Arduino pin D3 to strip DIN |
-| Power | 5V to VDD and GND to VSS |
-
-### Wokwi
-
-1. Use the [example sketch](firmware/led_cube/led_cube.ino), [library list](firmware/led_cube/libraries.txt), and [diagram](firmware/led_cube/diagram.json) to create a Wokwi project. The example diagram uses the hosted 8 × 8 × 8 viewer.
-2. To use another cube size or an existing project, open **Custom View Integration** in the hosted viewer. Copy its URL into the `customView` field in `diagram.json`, or download a diagram with the URL and pixel count already filled in.
-3. Start the Wokwi simulation. The viewer switches to **Custom View** when it receives a frame with the matching pixel count.
-
-[Wokwi diagram format](https://docs.wokwi.com/diagram-format) · [Wokwi Custom View example](https://github.com/wokwi/led-recorder#usage)
-
-### AVR8js Electron Playground
-
-1. In a build of the playground that supports Custom View, open its `led-3d-cube-custom-view` example or another project with a matching NeoPixel strip.
-2. Set the project's `customView` field in `diagram.json` to the hosted URL. For local development, run `npm run dev` and use `http://localhost:3000/?size=8`.
-3. Switch to **Custom View** in the simulator toolbar and run the project. The Electron bridge forwards live NeoPixel frames and serial output to the viewer.
-
-The playground runs the simulation with AVR8js and uses Wokwi Elements for its circuit UI. [AVR8js Electron Playground](https://github.com/arcostasi/avr8js-electron-playground)
-
-## Arduino firmware
-
-The bundled sketch offers six FastLED effects. Send `0` over serial to cycle through them or `1`–`6` to select an effect. In the viewer, **FastLED Code** shows the sketch with `CUBE_SIZE` set to the current cube size.
-
-To import a sketch compiled for Arduino Mega 2560, set the viewer's cube size to match the firmware and use **Load firmware** to open its Intel HEX file. The emulator reads WS2812B/GRB output from pin D3. The URL's `order` option also applies to imported HEX files.
-
-To rebuild the bundled firmware, install Arduino CLI and run the following commands.
-
-```sh
-arduino-cli core install arduino:avr@1.8.8
-arduino-cli lib install FastLED@3.10.10
-npm run build:firmware
+```json
+{
+  "customView": "https://arcostasi.github.io/led-3d-cube/?size=8"
+}
 ```
 
-This regenerates [`public/firmware/led_cube.hex`](public/firmware/led_cube.hex). The firmware is included in the repository, so the browser build needs only Node.js.
+For this example, use a 512-pixel strip with the ID `neopixels` and connect Arduino pin D3 to DIN. Keep the sketch and strip pixel counts equal to `size³`. Add `&order=serpentine` if the sketch addresses the LEDs in serpentine order.
 
-## Development
+- **Wokwi.** Add the Arduino example files to a project and start the simulation. [Sketch](firmware/led_cube/led_cube.ino) · [Libraries](firmware/led_cube/libraries.txt) · [Diagram](firmware/led_cube/diagram.json)
+- **AVR8js Electron Playground.** Open the `led-3d-cube-custom-view` example, set its `customView` URL, select **Custom View**, and run the project. Use `http://localhost:3000/?size=8` for local testing. [AVR8js Electron Playground](https://github.com/arcostasi/avr8js-electron-playground)
 
-| Command | Purpose |
-| --- | --- |
-| `npm run typecheck` | Check TypeScript types. |
-| `npm run build` | Type-check and build the static site into `dist/`. |
-| `npm run preview` | Serve the production build locally. |
+## Build
 
-GitHub Actions publishes updates to GitHub Pages from `main`. To host the viewer elsewhere, deploy the output of `npm run build` on an HTTPS server that allows Wokwi to embed it.
+Run `npm run build` to check types and build the static site into `dist/`. GitHub Actions deploys updates from `main` to GitHub Pages.
 
-- [`components/`](components/) contains the React interface and Three.js scene.
-- [`simulation/`](simulation/) contains the AVR8js worker, Intel HEX loader, animation generators, and Custom View receiver.
-- [`firmware/led_cube/`](firmware/led_cube/) contains the Arduino sketch, library list, and example diagram.
+To rebuild the bundled firmware, install Arduino CLI, the `arduino:avr@1.8.8` core, and `FastLED@3.10.10`, then run `npm run build:firmware`.
 
-The example diagram is based on Uri Shaked's Wokwi LED 3D Cube. The bundled firmware adapts FastLED's DemoReel100. [Original Wokwi viewer](https://github.com/wokwi/led-3d-cube) · [DemoReel100](https://github.com/FastLED/FastLED/blob/3.10.10/examples/DemoReel100/DemoReel100.ino) · [Third-party notices](public/licenses/) · [FastLED license](public/firmware/FASTLED-LICENSE.txt)
+## Credits and license
+
+The example diagram is based on Uri Shaked's original Wokwi LED 3D Cube. [Original Wokwi project](https://wokwi.com/projects/278306947843752461) · [Original viewer source](https://github.com/wokwi/led-3d-cube) · [FastLED effects example on Wokwi](https://wokwi.com/projects/288247972165059084)
+
+The bundled firmware adapts FastLED's DemoReel100. [DemoReel100](https://github.com/FastLED/FastLED/blob/3.10.10/examples/DemoReel100/DemoReel100.ino) · [FastLED license](public/firmware/FASTLED-LICENSE.txt) · [Third-party notices](public/licenses/)
+
+Copyright (C) 2026 Anderson Costa. Released under the [MIT license](https://github.com/wokwi/led-3d-cube/blob/gh-pages/LICENSE).
