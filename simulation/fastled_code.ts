@@ -19,6 +19,29 @@ const INDEX_TO_XYZ_MAPPING = `void indexToXyz(uint16_t index, uint8_t &x, uint8_
   x = y % 2 == 0 ? column : CUBE_SIZE - 1 - column;
 }`;
 
+function standaloneSketch(title: string, renderFrame: string, mapping = '') {
+    return `// ${title}
+#include <FastLED.h>
+
+#define CUBE_SIZE 8
+#define NUM_LEDS (CUBE_SIZE * CUBE_SIZE * CUBE_SIZE)
+#define DATA_PIN 3
+
+CRGB leds[NUM_LEDS];
+${mapping ? `\n${mapping}\n` : ''}
+void setup() {
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(160);
+}
+
+void loop() {
+${renderFrame}
+  FastLED.show();
+  delay(16);
+}
+`;
+}
+
 export const FASTLED_CODE: { [key: string]: string } = {
     "spherical-phyllotaxis": `/*
  * FastLED example: Spherical Phyllotaxis
@@ -592,4 +615,46 @@ void lissajousPath() {
 // ===============================================================
 ${XYZ_MAPPING}
     `,
+    "rainbow-layers": standaloneSketch('Rainbow Layers', `  const uint8_t shift = (millis() % 4200) * 256 / 4200;
+  for (uint8_t y = 0; y < CUBE_SIZE; ++y) {
+    const uint8_t phase = y * 256 / CUBE_SIZE + shift;
+    const CRGB color = CHSV(phase, 255, 102 + scale8(cos8(phase), 153));
+    for (uint8_t z = 0; z < CUBE_SIZE; ++z) {
+      for (uint8_t x = 0; x < CUBE_SIZE; ++x) {
+        leds[xyz(x, y, z)] = color;
+      }
+    }
+  }`, XYZ_MAPPING),
+    "snake-trail": standaloneSketch('Snake Trail', `  constexpr uint16_t cycle = 2 * (NUM_LEDS - 1);
+  constexpr uint8_t length = CUBE_SIZE * 3;
+  const uint16_t head = (millis() / 55) % cycle;
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
+
+  for (int offset = length - 1; offset >= 0; --offset) {
+    const uint16_t step = (head + cycle - offset) % cycle;
+    const uint16_t position = min(step, cycle - step);
+    const uint16_t scanRow = position / CUBE_SIZE;
+    const uint8_t column = position % CUBE_SIZE;
+    const uint8_t row = scanRow % CUBE_SIZE;
+    const uint8_t z = scanRow / CUBE_SIZE;
+    const uint8_t y = z % 2 == 0 ? row : CUBE_SIZE - 1 - row;
+    const uint8_t x = scanRow % 2 == 0 ? column : CUBE_SIZE - 1 - column;
+    const uint8_t brightness = 32 + 223 * (length - 1 - offset) / (length - 1);
+    leds[xyz(x, y, z)] = CHSV(step * 256UL / cycle, 255, brightness);
+  }`, XYZ_MAPPING),
+    "twinkle": standaloneSketch('Twinkle', `  constexpr uint16_t fadeMs = 300;
+  const uint32_t now = millis();
+  for (uint16_t i = 0; i < NUM_LEDS; ++i) {
+    const uint32_t seed = (i + 1) * 0x9e3779b1UL;
+    const uint16_t period = 1800 + (seed & 1023);
+    const uint16_t elapsed = (now + (seed >> 10)) % period;
+    if (elapsed >= 2 * fadeMs) {
+      leds[i] = CRGB::Black;
+      continue;
+    }
+
+    const uint16_t ramp = min(elapsed, 2 * fadeMs - elapsed);
+    const uint8_t glow = ramp * 255UL / fadeMs;
+    leds[i] = CHSV(seed >> 24, 200, scale8(glow, glow));
+  }`),
 };

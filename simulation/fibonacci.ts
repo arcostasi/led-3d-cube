@@ -455,6 +455,59 @@ export function createSimulation(cubeSize = CUBE_SIZE) {
         return leds;
     };
 
+    const generateRainbowLayers = (time: number, paletteName: string): Led[] => {
+        const leds = createBlankLeds();
+        for (let y = 0; y < cubeSize; y++) {
+            const phase = (y / cubeSize + time / 4200) % 1;
+            const brightness = 0.35 + 0.15 * Math.cos(phase * 2 * Math.PI);
+            const color = getColorFromPalette(paletteName, phase, brightness);
+            for (let z = 0; z < cubeSize; z++) {
+                for (let x = 0; x < cubeSize; x++) {
+                    leds[xyzToIndex(x, y, z)] = color;
+                }
+            }
+        }
+        return leds;
+    };
+
+    const snakePath = Uint16Array.from({ length: ledCount }, (_, i) => {
+        const scanRow = Math.floor(i / cubeSize);
+        const column = i % cubeSize;
+        const { y, z } = indexToXyz(i);
+        const x = scanRow % 2 === 0 ? column : cubeSize - 1 - column;
+        return xyzToIndex(x, y, z);
+    });
+    const generateSnakeTrail = (time: number, paletteName: string): Led[] => {
+        const leds = createBlankLeds();
+        const cycle = 2 * (ledCount - 1);
+        const head = Math.floor(time / 55) % cycle;
+        const length = cubeSize * 3;
+        // Visit neighboring LEDs and reverse at each end to keep the trail continuous.
+        for (let offset = length - 1; offset >= 0; offset--) {
+            const step = (head + cycle - offset) % cycle;
+            const index = snakePath[Math.min(step, cycle - step)];
+            const brightness = 0.08 + 0.52 * (1 - offset / (length - 1));
+            leds[index] = getColorFromPalette(paletteName, step / cycle, brightness);
+        }
+        return leds;
+    };
+
+    const twinkleSeeds = Uint32Array.from({ length: ledCount }, (_, i) => Math.imul(i + 1, 0x9e3779b1));
+    const generateTwinkle = (time: number, paletteName: string): Led[] => {
+        const leds = createBlankLeds();
+        const fadeMs = 300;
+        for (let i = 0; i < ledCount; i++) {
+            const seed = twinkleSeeds[i];
+            const period = 1800 + (seed & 1023);
+            const elapsed = (time + (seed >>> 10)) % period;
+            if (elapsed >= 2 * fadeMs) continue;
+
+            const glow = 1 - Math.abs(elapsed / fadeMs - 1);
+            leds[i] = getColorFromPalette(paletteName, (seed >>> 24) / 256, 0.6 * glow * glow);
+        }
+        return leds;
+    };
+
     // #endregion
 
     const generators: { [key: string]: (time: number, paletteName: string) => Led[] } = {
@@ -470,6 +523,9 @@ export function createSimulation(cubeSize = CUBE_SIZE) {
         'fireworks': generateFireworks,
         'axis-fill': generateAxisFill,
         'lissajous-path': generateLissajousPath,
+        'rainbow-layers': generateRainbowLayers,
+        'snake-trail': generateSnakeTrail,
+        'twinkle': generateTwinkle,
     };
 
     return (patternName: string, time: number, paletteName: string): Led[] => {

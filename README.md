@@ -6,6 +6,8 @@ An interactive RGB LED cube, an Arduino Mega simulator, and a Custom View for Wo
 
 Select **Start simulation** to run the bundled FastLED firmware. Choose **3D Animations** in **Local Simulation** to explore geometric effects and color palettes.
 
+Try **Rainbow Layers**, **Snake Trail**, or **Twinkle**. Use **FastLED Code** to copy a complete Arduino sketch for any of these three effects.
+
 ## Run locally
 
 Use Node.js 20.19+ on the 20.x line or Node.js 22.12+ and a browser with WebGL 2.
@@ -28,6 +30,8 @@ Set the `customView` field in your project's `diagram.json` to the hosted viewer
 ```
 
 For this example, use a 512-pixel strip with the ID `neopixels` and connect Arduino pin D3 to DIN. Keep the sketch and strip pixel counts equal to `size³`. Add `&order=serpentine` if the sketch addresses the LEDs in serpentine order.
+
+Embedded viewers hide the cube summary by default. Use **Show cube summary** to reveal the dimensions, active LEDs, and FPS.
 
 - **Wokwi.** Add the Arduino example files to a project and start the simulation. [Sketch](firmware/led_cube/led_cube.ino) · [Libraries](firmware/led_cube/libraries.txt) · [Diagram](firmware/led_cube/diagram.json)
 - **AVR8js Electron Playground.** Open the `led-3d-cube-custom-view` example, set its `customView` URL, select **Custom View**, and run the project. Use `http://localhost:3000/?size=8` for local testing. [AVR8js Electron Playground](https://github.com/arcostasi/avr8js-electron-playground)

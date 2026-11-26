@@ -3,6 +3,8 @@ import type { Led } from '../types';
 import { AVR_PATTERN_NAMES, decodeNeoPixels, type PixelOrder } from './fastled';
 
 const WOKWI_ORIGIN = 'https://wokwi.com';
+// Older sketches report positions in the original 12-pattern list.
+const legacyPatternNames = PATTERN_NAMES.slice(0, 12);
 
 function isLoopback(hostname: string) {
   return ['localhost', '127.0.0.1', '[::1]'].includes(hostname);
@@ -77,7 +79,7 @@ export function listenToCustomView(onFrame: (leds: Led[]) => void, onPattern: (p
         const native = /^FastLED:(\d+)$/.exec(line.trim());
         const legacy = /Mudando para padrão: (\d+)/.exec(line);
         const pattern = native ? AVR_PATTERN_NAMES[Number(native[1])]
-          : legacy && PATTERN_LABELS[PATTERN_NAMES[Number(legacy[1])]];
+          : legacy && PATTERN_LABELS[legacyPatternNames[Number(legacy[1])]];
         if (pattern) onPattern(pattern);
       }
     }

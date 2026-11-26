@@ -13,6 +13,9 @@ export const PATTERN_LABELS: Record<string, string> = {
     "fireworks": "Fireworks",
     "axis-fill": "Axis Fill",
     "lissajous-path": "Lissajous Path",
+    "rainbow-layers": "Rainbow Layers",
+    "snake-trail": "Snake Trail",
+    "twinkle": "Twinkle",
 };
 export const PATTERN_NAMES = Object.keys(PATTERN_LABELS);
 
