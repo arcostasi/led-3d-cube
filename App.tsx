@@ -18,7 +18,10 @@ import { readMegaFirmware } from './simulation/intelHex';
 import { useAvrSimulation, type LoadedFirmware } from './simulation/useAvrSimulation';
 import { listenToCustomView } from './simulation/customView';
 import { indexToXyz } from './utils/helpers';
-import { readViewerSettings, saveViewerSettings, viewerRanges, type ChangeSetting, type PanelId } from './utils/viewerSettings';
+import {
+  readEmbeddedSummary, readViewerSettings, saveEmbeddedSummary, saveViewerSettings,
+  viewerRanges, type ChangeSetting, type PanelId,
+} from './utils/viewerSettings';
 
 interface DisplayedFrame {
   leds: Led[];
@@ -61,14 +64,16 @@ function createPreview(cubeSize: number) {
 
 const query = new URLSearchParams(window.location.search);
 const querySize = Number(query.get('size'));
+const embedded = window.parent !== window;
 const initialSize = Number.isInteger(querySize) && querySize >= viewerRanges.cubeSize.min &&
-  querySize <= viewerRanges.cubeSize.max ? querySize : window.parent !== window ? CUBE_SIZE : null;
+  querySize <= viewerRanges.cubeSize.max ? querySize : embedded ? CUBE_SIZE : null;
 const externalPixelOrder: PixelOrder = query.get('order') === 'serpentine' ? 'serpentine' : 'linear';
 
 const App = () => {
   const wideLayout = useSyncExternalStore(subscribeToLayout, getWideLayout);
   const [settings, setSettings] = useState(readViewerSettings);
-  const headerOpen = settings.headerOpen ?? true;
+  const [embeddedSummaryOpen, setEmbeddedSummaryOpen] = useState(() => embedded && readEmbeddedSummary());
+  const headerOpen = embedded ? embeddedSummaryOpen : settings.headerOpen ?? true;
   const [frame, setFrame] = useState<DisplayedFrame | null>(null);
   const [urlSize, setUrlSize] = useState(initialSize);
   const { localPattern, colorPalette, desktopPanels, compactPanel, simulationSource, avrPattern } = settings;
@@ -132,6 +137,16 @@ const App = () => {
     }
     setSettings(current => ({ ...current, [key]: value }));
   }, []);
+
+  const toggleSummary = () => {
+    const open = !headerOpen;
+    if (embedded) {
+      setEmbeddedSummaryOpen(open);
+      saveEmbeddedSummary(open);
+    } else {
+      changeSetting('headerOpen', open);
+    }
+  };
 
   useEffect(() => {
     return listenToCustomView((incomingLeds) => {
@@ -300,7 +315,7 @@ const App = () => {
           <div className="panel-tools" role="group" aria-label="Toggle panels">
             <button type="button" className="icon-button" aria-controls="header-brand header-readouts" aria-expanded={headerOpen}
               aria-label={summaryLabel} data-tooltip={summaryLabel}
-              onClick={() => changeSetting('headerOpen', !headerOpen)}>
+              onClick={toggleSummary}>
               <Icon name="top" />
             </button>
             {panelDefinitions.map(({ id, title, icon }) => {

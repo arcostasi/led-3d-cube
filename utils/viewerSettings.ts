@@ -2,6 +2,7 @@ import { CUBE_SIZE, PALETTE_NAMES, PATTERN_NAMES } from '../constants';
 import { AVR_PATTERN_NAMES } from '../simulation/fastled';
 
 const storageKey = 'led-cube:settings:v1';
+const embeddedSummaryKey = 'led-cube:embedded-summary';
 
 // Migrate the IDs saved by older versions of the viewer.
 const legacyPatterns: Record<string, string> = {
@@ -131,5 +132,21 @@ export function saveViewerSettings(settings: ViewerSettings) {
     window.localStorage.setItem(storageKey, JSON.stringify(settings));
   } catch {
     // Keep the viewer usable when the browser blocks storage.
+  }
+}
+
+export function readEmbeddedSummary() {
+  try {
+    return window.localStorage.getItem(embeddedSummaryKey) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function saveEmbeddedSummary(open: boolean) {
+  try {
+    window.localStorage.setItem(embeddedSummaryKey, String(open));
+  } catch {
+    // The summary remains toggleable when the browser blocks embedded storage.
   }
 }
