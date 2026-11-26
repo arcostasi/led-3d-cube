@@ -411,16 +411,15 @@ button, select, input[type="range"], input[type="checkbox"] { cursor: pointer; }
   right: 8px;
   bottom: 8px;
   display: flex;
-  background: #252526f5;
-  border: 1px solid #3c3c3c;
+  background: color-mix(in srgb, var(--sidebar) 96%, transparent);
+  border: 1px solid var(--line);
   border-radius: 6px;
   padding: 2px;
 }
-.camera-toolbar .icon-button { width: 29px; height: 28px; color: #ababac; }
-.camera-toolbar .icon-button:hover:not(:disabled) { color: #ffffff; background: #383838; }
-.camera-toolbar .icon-button[aria-pressed="true"] { color: #75baff; background: #263c50; }
+.camera-toolbar .icon-button { width: 29px; height: 28px; }
+.camera-toolbar .icon-button[aria-pressed="true"] { color: var(--accent-text); background: var(--selection); }
 .camera-toolbar .icon-button svg { width: 15px; height: 15px; }
-.camera-toolbar .camera-divider { border-left-color: #3c3c3c; border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: 2px; }
+.camera-toolbar .camera-divider { border-left-color: var(--line); border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: 2px; }
 .camera-toolbar .icon-button[data-tooltip]::after {
   inset-block: auto calc(100% + 7px);
 }
