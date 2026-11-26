@@ -44,4 +44,4 @@ The example diagram is based on Uri Shaked's original Wokwi LED 3D Cube. [Origin
 
 The bundled firmware adapts FastLED's DemoReel100. [DemoReel100](https://github.com/FastLED/FastLED/blob/3.10.10/examples/DemoReel100/DemoReel100.ino) · [FastLED license](public/firmware/FASTLED-LICENSE.txt) · [Third-party notices](public/licenses/)
 
-Copyright (C) 2026 Anderson Costa. Released under the [MIT license](https://github.com/wokwi/led-3d-cube/blob/gh-pages/LICENSE).
+Copyright (C) 2026 Anderson Costa. Released under the [MIT license](LICENSE).
